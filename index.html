@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List|Rudra </title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #0f0f0f, #1a1a2e);
+            backdrop-filter: blur(15px);
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(30px);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0px 0px 40px rgba(255, 255, 255, 0.1);
+            width: 400px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            text-shadow: 0px 0px 10px cyan;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 10px;
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            text-align: center;
+        }
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .btn-container {
+            display: flex;
+            justify-content: center;
+        }
+        button {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #ff3cac, #562b7c, #2b86c5);
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: 0.3s;
+            font-weight: bold;
+            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.3);
+        }
+        button:hover {
+            transform: scale(1.1);
+            opacity: 0.9;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+        }
+        li {
+            background: rgba(255, 255, 255, 0.15);
+            margin: 10px 0;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 10px;
+            color: white;
+            cursor: grab;
+            transition: 0.3s;
+        }
+        .completed {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+        .delete, .edit {
+            background: rgba(255, 0, 0, 0.7);
+            color: white;
+            border: none;
+            padding: 6px;
+            cursor: pointer;
+            border-radius: 10px;
+            margin-left: 5px;
+        }
+        .edit {
+            background: rgba(0, 255, 0, 0.7);
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        .social-section {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.social-section {
+    position: absolute;
+    bottom: 20px; /* इसे एडजस्ट करके ऊपर-नीचे कर सकते हो */
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    width: 100%;
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.social-links a img {
+    transition: transform 0.3s ease-in-out;
+}
+
+.social-links a:hover img {
+    transform: scale(1.2);
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>📝 To-Do List</h2>
+        <input type="text" id="taskInput" placeholder="Enter a task...">
+        <div class="btn-container">
+            <button onclick="addTask()">Add Task</button>
+        </div>
+        <ul id="taskList"></ul>
+        <div class="footer">Made by Rudra Vishwakarma</div>
+    </div><div class="social-section">
+        <p>Follow me on:</p>
+        <div class="social-links">
+            <a href="https://www.instagram.com/_rudra.aaaaa?igsh=b3dvdmFhNjA5ZzI0" target="_blank">
+                <img src="instagram-logo.png" alt="Instagram" width="30">
+            </a>
+            <a href="https://www.linkedin.com/in/rudra-vishwakarma-80b7a0269" target="_blank">
+                <img src="linkedin-logo.png" alt="LinkedIn" width="30">
+            </a>
+            <a href="https://x.com/Rudracavin?t=1XoePwe1yJAjJa1Mc6fwEw&s=09" target="_blank">
+                <img src="twitter-logo.png" alt="Twitter" width="30">
+            </a>
+            <a href="https://github.com/Rudraa01" target="_blank">
+                <img src="github-logo.png" alt="GitHub" width="30">
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", loadTasks);
+        function addTask() {
+            let taskInput = document.getElementById("taskInput");
+            let taskList = document.getElementById("taskList");
+            let taskText = taskInput.value.trim();
+            if (taskText === "") return;
+            let li = document.createElement("li");
+            li.draggable = true;
+            li.innerHTML = `<span onclick='toggleComplete(this)'>${taskText}</span>
+                <button class='edit' onclick='editTask(this)'>Edit</button>
+                <button class='delete' onclick='removeTask(this)'>Delete</button>`;
+            taskList.appendChild(li);
+            taskInput.value = "";
+            saveTasks();
+        }
+        function removeTask(button) {
+            button.parentElement.remove();
+            saveTasks();
+        }
+        function toggleComplete(task) {
+            task.classList.toggle("completed");
+            saveTasks();
+        }
+        function editTask(button) {
+            let taskText = button.parentElement.querySelector("span");
+            let newTask = prompt("Edit your task", taskText.innerText);
+            if (newTask !== null) {
+                taskText.innerText = newTask;
+            }
+            saveTasks();
+        }
+        function saveTasks() {
+            let tasks = [];
+            document.querySelectorAll("#taskList li").forEach(li => {
+                tasks.push({
+                    text: li.querySelector("span").innerText,
+                    completed: li.querySelector("span").classList.contains("completed")
+                });
+            });
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+        }
+        function loadTasks() {
+            let taskList = document.getElementById("taskList");
+            let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            tasks.forEach(task => {
+                let li = document.createElement("li");
+                li.draggable = true;
+                li.innerHTML = `<span onclick='toggleComplete(this)' class='${task.completed ? "completed" : ""}'>${task.text}</span>
+                    <button class='edit' onclick='editTask(this)'>Edit</button>
+                    <button class='delete' onclick='removeTask(this)'>Delete</button>`;
+                taskList.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>
